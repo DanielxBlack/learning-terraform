@@ -1,11 +1,20 @@
+# Resource block. We create "aws_launch_configuration."
+# We call it "example." We can name it anything.
 resource "aws_launch_configuration" "example" {
+    # We set an image_id (AMI is amazon machine image).
+    # We set an instance type: t2.micro.
     image_id = "ami-0fb653ca2d3203ac1"
     instance_type = "t2.micro"
+
+    # Assign it a security group.
     security_groups = [aws_security_group.instance.id]
     
+    # We use "user_data" to run a shell script.
     user_data = <<-EOF
                 #!/bin/bash
                 echo "Hello World" > index.html
+                # The shell script contains a variable, our server port.
+                # We use "var.server_port" to set it. 
                 nohup busybox httpd -f -p ${var.server_port} &
                 EOF
 
@@ -17,11 +26,19 @@ resource "aws_launch_configuration" "example" {
   
 }
 
-
+# Next resource block. We have our "aws_autoscaling_group"
+# We call it "example."
 resource "aws_autoscaling_group" "example" {
+    # Notice the "aws_launch_configuration" up at the start of the code?
+    # That gets called here.
     launch_configuration = aws_launch_configuration.example.name
-    vpc_zone_identifier = 
+    
+    # We set out vpc_zone_identifier to:
+    # data.aws_subnets.default.ids
+    # We pass it data, which we use the aws_subnets listed below
+    vpc_zone_identifier = data.aws_subnets.default.ids
 
+    # We set a min and max size. Defaults to 2.
     min_size = 2
     max_size = 10
 
@@ -32,12 +49,18 @@ resource "aws_autoscaling_group" "example" {
     } 
 }
 
-
+# We can call a data source. The aws_vpc 
+# default will show us our provider (aws_vpc)
+# The name we want to refer to it as (default)
+# then the configuration inside the {}
+# is different from the "name" we gave it
+# It's just saying we want to see our default VPC
+}
 data "aws_vpc" "default" {
     default = true
 }
 
-
+# We can see this stuff called in the second resource block.
 data "aws_subnets" "default" {
     filter {
         name = "vpc-id"
