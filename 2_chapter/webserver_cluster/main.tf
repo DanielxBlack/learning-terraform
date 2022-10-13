@@ -52,10 +52,10 @@ resource "aws_autoscaling_group" "example" {
 # We can call a data source. The aws_vpc 
 # default will show us our provider (aws_vpc)
 # The name we want to refer to it as (default)
-# then the configuration inside the {}
+# then the configuration inside the curly braces.
 # is different from the "name" we gave it
 # It's just saying we want to see our default VPC
-}
+
 data "aws_vpc" "default" {
     default = true
 }
