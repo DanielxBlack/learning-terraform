@@ -176,7 +176,7 @@ resource "aws_lb_listener_rule" "asg" {
 # We can call a data source. The aws_vpc 
 # default will show us our provider (aws_vpc)
 # The name we want to refer to it as (default)
-# then the configuration inside the curly braces.
+# then the configuration inside the curly braces
 # is different from the "name" we gave it
 # It's just saying we want to see our default VPC
 
@@ -184,7 +184,7 @@ data "aws_vpc" "default" {
     default = true
 }
 
-# We can see this stuff called in the second resource block.
+# We can see this stuff called in the second resource block
 data "aws_subnets" "default" {
     filter {
         name = "vpc-id"
@@ -192,7 +192,7 @@ data "aws_subnets" "default" {
     }
 }
 
-
+# Output our DNS name
 output "alb_dns_name" {
     value = aws_lb.example.dns_name
     description = "The domain name of the load balancer."
