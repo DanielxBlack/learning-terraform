@@ -1,3 +1,18 @@
+terraform {
+  required_version = ">= 1.0.0, < 2.0.0"
+  
+  required_providers {
+    aws = {
+        source = "hashicorp/aws"
+        version = "~> 4.0"
+    }
+  }
+}
+
+provider "aws" {
+    region = "us-east-2"
+}
+
 # Resource block. We create "aws_launch_configuration."
 # We call it "example." We can name it anything.
 resource "aws_launch_configuration" "example" {
@@ -6,7 +21,6 @@ resource "aws_launch_configuration" "example" {
     image_id = "ami-0fb653ca2d3203ac1"
     instance_type = "t2.micro"
 
-    # Assign it a security group.
     security_groups = [aws_security_group.instance.id]
     
     # We use "user_data" to run a shell script.
@@ -47,6 +61,26 @@ resource "aws_autoscaling_group" "example" {
         value = "terraform-asg-example"
         propagate_at_launch =  true
     } 
+}
+
+# We can set our server_port variable here with a default value of 8080
+# Notice the number constraint. It hast to be a number.
+variable "server_port" {
+    description = "The port the server will use for HTTP requests."
+    type = number
+    default = 8080
+}
+
+# We create a resource using the "aws_security_group" and name it "instance"
+resource "aws_security_group" "instance" {
+    name = "terraform-example-instance"
+
+    ingress {
+        from_port = var.server_port
+        to_port = var.server_port
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
 }
 
 # We can call a data source. The aws_vpc 
