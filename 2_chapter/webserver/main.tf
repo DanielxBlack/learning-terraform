@@ -31,7 +31,7 @@ resource "aws_instance" "example" {
 # You have to conifgure a security group.
 
 # First, let's set a variable.
-
+# If we don't set one, it will default to 8080.
 variable "server_port" {
   description = "The port the server will use for HTTP requests."
   type = number
