@@ -1,4 +1,15 @@
 # This is the file that can configure our remote state file.
+terraform {
+  backend "s3" {
+    # This will contain our bucket name
+    bucket = "nuxie-learning-tf-state-bucket"
+    key    = "global/s3/terraform.tfstate"
+    region = "us-east-2"
+    # This will contain our dynamoDB table name
+    dynamodb_table = "nuxie-learning-tf-locks"
+    encrypt        = true
+  }
+}
 
 # Start with the provider block
 provider "aws" {
