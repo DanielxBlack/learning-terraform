@@ -29,7 +29,7 @@ resource "aws_s3_bucket" "terraform_state" {
 
 # Enable versioning so we can view old state files
 resource "aws_s3_bucket_versioning" "enabled" {
-  bucket = "aws_s3_bucket.terraform_state.id"
+  bucket = aws_s3_bucket.terraform_state.id
   versioning_configuration {
     status = "Enabled"
   }
@@ -66,4 +66,18 @@ resource "aws_dynamodb_table" "terraform_locks" {
     name = "LockID"
     type = "S"
   }
+}
+
+
+# This line enables us to see when TF pulls the latest state from the S3 bucket
+output "s3_bucket_arn" {
+  value       = aws_s3_bucket.terraform_state.arn
+  description = "The ARN of the s3 bucket"
+
+}
+
+# See when the state is pushed
+output "dynamodb_table_name" {
+  value       = aws_dynamodb_table.terraform_locks.name
+  description = "The name of the dynamodb table"
 }
